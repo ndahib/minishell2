@@ -1,31 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   include.h                                          :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ndahib <ndahib@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/19 16:18:38 by ndahib            #+#    #+#             */
-/*   Updated: 2023/07/23 18:20:19 by ndahib           ###   ########.fr       */
+/*   Created: 2023/07/23 09:31:06 by ndahib            #+#    #+#             */
+/*   Updated: 2023/07/23 18:21:31 by ndahib           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef INCLUDE_H
-# define INCLUDE_H
+#include <stdlib.h>
+#include "libft.h"
 
-# include <stdio.h>
-# include <string.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <fcntl.h>
-# include <sys/wait.h>
-# include "messages.h"
-# include "color.h"
-# include "lexer.h"
-# include "../libft/libft.h"
-# include "parsing.h"
-# include "execution.h"
+int	ft_strcmp(char *s1, char *s2)
+{
+	int	i;
 
-#endif
+	i = 0;
+	if (s1 == 0 || s2 == 0)
+		return (1);
+	if (ft_strlen(s1) != ft_strlen(s2))
+		return (1);
+	while (s1[i] && s2[i])
+	{
+		if (s1[i] != s2[i])
+			return (1);
+		i++;
+	}
+	return (0);
+}

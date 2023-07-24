@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built_ins_1.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ndahib <ndahib@student.42.fr>              +#+  +:+       +#+        */
+/*   By: yraiss <yraiss@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 12:10:46 by ndahib            #+#    #+#             */
-/*   Updated: 2023/07/21 17:00:54 by ndahib           ###   ########.fr       */
+/*   Updated: 2023/07/24 19:04:24 by yraiss           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,14 @@ void	print_export_lst(t_env *lst)
 	}	
 }
 
-void	my_export(t_env ***lst, char **args)
+int	my_export(t_env ***lst, char **args)
 {
 	char	**splited_args;
 
 	if (*args == NULL)
 	{
 		print_export_lst(**lst);
-		return ;
+		return (0);
 	}
 	while (*args != NULL)
 	{
@@ -43,7 +43,7 @@ void	my_export(t_env ***lst, char **args)
 		if (check_if_quotes_exist(args) != 0)
 		{
 			printf("minshell: not a valid identifier\n");
-			return ;
+			return (1);
 		}
 		if (check_if_exist(*lst, splited_args) == 0)
 		{
@@ -52,6 +52,7 @@ void	my_export(t_env ***lst, char **args)
 		}
 		args++;
 	}
+	return (0);
 }
 
 //==================================UNSET====================================//

@@ -6,7 +6,7 @@
 /*   By: ndahib <ndahib@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/09 07:59:58 by ndahib            #+#    #+#             */
-/*   Updated: 2023/07/22 12:23:35 by ndahib           ###   ########.fr       */
+/*   Updated: 2023/07/23 19:00:18 by ndahib           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,19 @@ char	**obtain_args(char	**token, t_env *env_var)
 
 	j = 0;
 	len = token_nbr(token);
+	if (len == 0)
+		return (NULL);
 	args = malloc((len + 1) * sizeof(char *));
 	if (!args)
 		return (NULL);
-	while (j < len && *token != NULL)
+	while (j < len && token[j] != NULL)
 	{
-		while ((ft_strchr(*token, '>') != NULL
-			|| ft_strchr(*token, '<') != NULL) && (*token + 1) != NULL)
+		while ((ft_strchr(token[j], '>') != NULL
+				|| ft_strchr(token[j], '<') != NULL) && token[j + 1] != NULL)
 			token += 2;
-		if (*token == NULL || **token == '|')
-			break ;
-		args[j] = ft_strjoin("", *token);
-		token++;
+		if (token[j] == NULL || *token[j] == '|')
+			return (NULL);
+		args[j] = ft_strdup(token[j]);
 		j++;
 	}
 	args[j] = NULL;
@@ -67,8 +68,8 @@ char	*obtain_cmd(char **token)
 			token += 2;
 	}
 	if (*token != NULL)
-		cmd = ft_strjoin("", *token);
-	return (cmd);    
+		cmd = ft_strdup(*token);
+	return (cmd);
 }
 
 t_simple_cmd	*create_node_cmd(t_env *env_var, char ***token)
@@ -83,7 +84,7 @@ t_simple_cmd	*create_node_cmd(t_env *env_var, char ***token)
 	}
 	node->fd = -1;
 	node->arg = obtain_args(*token, env_var);
-	node->cmd =	obtain_cmd(node->arg);
+	node->cmd = obtain_cmd(node->arg);
 	node->path = obtain_path(node->cmd, env_var);
 	node->files = obtain_files(token, &node, env_var);
 	node->next = NULL;

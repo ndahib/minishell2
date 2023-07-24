@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yraiss <yraiss@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: ndahib <ndahib@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 10:08:56 by ndahib            #+#    #+#             */
-/*   Updated: 2023/07/23 00:57:00 by yraiss           ###   ########.fr       */
+/*   Updated: 2023/07/24 17:26:11 by ndahib           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,77 +16,41 @@ void	obtain_value(t_env *env, char **new_arg, char **arg)
 {
 	char	*value;
 	char	*cursor;
+	char	*sub;
 
 	if (ft_isalpha(*(*arg + 1)) == 1 || *(*arg + 1) == '_')
 	{
-		cursor = my_getenv(env, ft_substr(*arg, 1, len_of_var(*arg + 1)));
+		sub = ft_substr(*arg, 1, len_of_var(*arg + 1));
+		cursor = my_getenv(env, sub);
+		free(sub);
 		value = ft_strjoin("", cursor);
 		free (cursor);
 		cursor = value;
 		if (ft_strlen(cursor) != 0)
 		{
-			while (*cursor != 0)
-			{
-				if ((*cursor == ' ' || *cursor == '\t') && *cursor++)
-					*new_arg = ft_joinchar(*new_arg, '\2');
-				else
-					*new_arg = ft_joinchar(*new_arg, *cursor++);
-			}
+			join_cursor(new_arg, cursor);
 			free(value);
 		}
 		*arg += len_of_var(*arg + 1) + 1;
 	}
 	else if (*(*arg + 1) == '?')
 	{
-		*new_arg = ft_strjoin(*new_arg, ft_itoa(exit_status));
+		char	*exit;
+		exit = ft_itoa(g_exit_status);
+		*new_arg = ft_strjoin(*new_arg, exit);
+		free(exit);
 		(*arg) += 2;
 	}
 	else if (*arg + 1 != NULL)
-	{
-		while (**arg != '\0')
-		{
-			*new_arg = ft_joinchar(*new_arg, **arg);
-			(*arg) += 1;
-		}
-	}
+		join_and_increment(new_arg, arg);
 }
 
 void	print_inside_dquotes(t_env *env, char **new_arg, char **arg)
 {
-	char	*value;
-	char	*cursor;
-	int		i;
-
-	i = 0;
 	while (**arg != '"' && *(*arg + 1) != '\0')
 	{
 		if (**arg == '$')
-		{
-			cursor = my_getenv(env, ft_substr(*arg, 1, len_of_var(*arg + 1)));
-			value = ft_strjoin("", cursor);
-			free(cursor);
-			cursor = value;
-			if (ft_strlen(cursor) != 0)
-			{
-				while (cursor[i] != 0)
-				{
-					*new_arg = ft_joinchar(*new_arg, cursor[i]);
-					i++;
-				}
-				free(cursor);
-			}
-			else if (*(*arg + 1) == '?')
-			{
-				*new_arg = ft_strjoin(*new_arg, ft_itoa(exit_status));
-				(*arg) += 2;
-			}
-			else
-				*new_arg = ft_joinchar(*new_arg, **arg);
-			if (*arg != 0)// buck to '\0'
-				*arg += len_of_var(*arg + 1) + 1;
-			if (ft_strlen(value) != 0)
-				free (value);
-		}
+			expande_inside_quotes(new_arg, arg, env);
 		else
 			*new_arg = ft_joinchar(*new_arg, *(*arg)++);
 	}
@@ -152,7 +116,6 @@ char	**expander(t_env *env, char **arg)
 	char	*one_line;
 	char	*new_line;
 	char	**splited;
-	char 	*tmp;
 	char	**tmp_for_arg;
 
 	one_line = "";
@@ -160,14 +123,13 @@ char	**expander(t_env *env, char **arg)
 	while (*arg != NULL)
 	{
 		one_line = ft_strjoin(one_line, *arg);
-		one_line = ft_joinchar(one_line, ' ');
+		one_line = ft_joinchar(one_line, '\2');
 		arg++;
 	}
-	tmp = ft_strdup(one_line);
 	new_line = expand_line(env, one_line);
+	free(one_line);
 	splited = ft_split(new_line, '\2');
-	free(tmp);
+	free(new_line);
 	free_double_pointer(tmp_for_arg);
-	// free(new_line);
 	return (splited);
 }
