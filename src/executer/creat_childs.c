@@ -6,7 +6,7 @@
 /*   By: yraiss <yraiss@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 20:15:45 by ndahib            #+#    #+#             */
-/*   Updated: 2023/07/24 19:06:44 by yraiss           ###   ########.fr       */
+/*   Updated: 2023/07/25 01:36:55 by yraiss           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	create_child(t_simple_cmd *one_cmd, char **env)
 	pid = fork();
 	if (pid == -1)
 		perror("fork :");
-	else if (!pid)
+	if (pid == 0)
 	{
 		if (one_cmd->fd != -1)
 			dup_close(one_cmd->fd);
@@ -45,25 +45,27 @@ void	create_child(t_simple_cmd *one_cmd, char **env)
 			perror("minishell: command not found\n");
 			exit(127);
 		}
-		else
-			exit(EXIT_SUCCESS);
+		exit(EXIT_SUCCESS);
 	}
 	wait_childs(1);
 }
 
 void	execute_cmd(t_simple_cmd *cmd, char **env_array)
 {
+	int		on;
+
+	on = 0;
 	if (cmd->path == NULL)
 	{
 		printf("minishell : command not found\n");
-		free_lst_of_cmd(&cmd);
+		free_lst_of_cmd(&cmd, on);
 		free_double_pointer(env_array);
 		exit(127);
 	}
 	if (execve(cmd->path, cmd->arg, env_array) == -1)
 	{
 		perror("minishell:\n");
-		free_lst_of_cmd(&cmd);
+		free_lst_of_cmd(&cmd, on);
 		free_double_pointer(env_array);
 		exit(127);
 	}
@@ -97,6 +99,7 @@ void	create_childs(t_simple_cmd *cmd, t_env **env, t_pipe_files *var)
 			exit(EXIT_SUCCESS);
 		else
 			execute_cmd(cmd, env_arr);
+		exit(1);
 	}
 }
 

@@ -6,15 +6,27 @@
 /*   By: yraiss <yraiss@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 15:42:32 by ndahib            #+#    #+#             */
-/*   Updated: 2023/07/24 19:41:52 by yraiss           ###   ########.fr       */
+/*   Updated: 2023/07/25 01:13:38 by yraiss           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_all(t_simple_cmd **lst, char **tokens, char *line)
+void    handle_sig(int sig)
 {
-	free_lst_of_cmd(lst);
+	if (sig == SIGINT)
+	{
+		g_exit_status = 130;
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("",0);
+		rl_redisplay();
+	}
+}
+
+void	free_all(t_simple_cmd **lst, char **tokens, char *line, int trigger)
+{
+	free_lst_of_cmd(lst, trigger);
 	free_double_pointer(tokens);
 	free(line);
 }
@@ -27,6 +39,8 @@ void	minishell_loop(t_env **env_lst)
 
 	(void)env_lst;
 	parse_cmd = NULL;
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, handle_sig);
 	while (1)
 	{
 		cmd_line = readline("minishell-> "CYAN);
@@ -48,8 +62,8 @@ void	minishell_loop(t_env **env_lst)
 			continue ;
 		}
 		parse_cmd = parse_simple_cmd(*env_lst, tokens);
-		execute_commands(parse_cmd, env_lst);
-		free_all(&parse_cmd, tokens, cmd_line);
+		int trigger = execute_commands(parse_cmd, env_lst);
+		free_all(&parse_cmd, tokens, cmd_line, trigger);
 	}
 }
 

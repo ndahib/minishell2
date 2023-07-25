@@ -6,7 +6,7 @@
 /*   By: yraiss <yraiss@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 12:10:46 by ndahib            #+#    #+#             */
-/*   Updated: 2023/07/24 19:04:24 by yraiss           ###   ########.fr       */
+/*   Updated: 2023/07/25 02:29:13 by yraiss           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,39 +18,46 @@
 void	print_export_lst(t_env *lst)
 {
 	t_env	*tmp;
+	char	**arr;
 
 	tmp = lst;
 	while (tmp != NULL)
 	{
-		if (ft_strncmp(tmp->env, EXPORT_VAR, 47) != 0)
-			printf("declare -x %s\n", tmp->env);
+		arr = ft_split(tmp->env,'=');
+		if (ft_strncmp(tmp->env, EXPORT_VAR, 50) != 0)
+			printf("declare -x %s = \"%s\"\n", arr[0], arr[1]);
 		tmp = tmp->next;
-	}	
+	}
+	//free arr
 }
 
 int	my_export(t_env ***lst, char **args)
 {
 	char	**splited_args;
+	int		i;
 
-	if (*args == NULL)
+	i = 0;
+	if (args[0] == NULL)
 	{
 		print_export_lst(**lst);
 		return (0);
 	}
-	while (*args != NULL)
+	while (args[i] != NULL)
 	{
-		splited_args = ft_split(*args, '=');
+		splited_args = ft_split(args[i], '=');
 		if (check_if_quotes_exist(args) != 0)
 		{
+			//free_splited_args;
 			printf("minshell: not a valid identifier\n");
 			return (1);
 		}
 		if (check_if_exist(*lst, splited_args) == 0)
 		{
-			add_at_end_export(lst, create_node(*args));
+			add_at_end_export(lst, create_node(args[i]));
 			free_double_pointer(splited_args);
 		}
-		args++;
+		//free_splited_args;
+		i++;
 	}
 	return (0);
 }

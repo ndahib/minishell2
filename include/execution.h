@@ -6,7 +6,7 @@
 /*   By: yraiss <yraiss@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 12:52:25 by yraiss            #+#    #+#             */
-/*   Updated: 2023/07/24 18:39:05 by yraiss           ###   ########.fr       */
+/*   Updated: 2023/07/25 02:09:34 by yraiss           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,6 @@ void	create_childs(t_simple_cmd *cmd, t_env **env, t_pipe_files *var);
 int		in_redirection(char *file);
 int		out_redirection(char *file);
 int		append_redirection(char *file);
+void    handle_sig(int sig);
 
 #endif
